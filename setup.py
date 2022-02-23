@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-install_requires = ["django>=3"]
+install_requires = ["django>=3", "djangorestframework>=3"]
 
 test_require = [
     "black",
