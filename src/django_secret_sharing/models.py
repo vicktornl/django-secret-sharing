@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
 # from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 # from wagtail.core.models import Page
 
@@ -21,7 +22,6 @@ class MutationDateModel(models.Model):
 
     class Meta:
         abstract = True
-
 
 
 class SecretManager(models.Manager):
