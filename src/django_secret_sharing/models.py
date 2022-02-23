@@ -7,11 +7,21 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.core.models import Page
+# from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+# from wagtail.core.models import Page
 
-from vicktor.apps.secrets.utils import parse_url_part, validate_signed_id
-from vicktor.models import MutationDateModel
+# from django_secret_sharing.utils import parse_url_part, validate_signed_id
+
+
+class MutationDateModel(models.Model):
+    created_at = models.DateTimeField(
+        _("created at"), auto_now_add=True, editable=False
+    )
+    modified_at = models.DateTimeField(_("modified at"), auto_now=True, editable=False)
+
+    class Meta:
+        abstract = True
+
 
 
 class SecretManager(models.Manager):
@@ -39,32 +49,32 @@ class Secret(MutationDateModel):
         verbose_name_plural = _("Secrets")
 
 
-class AbstractSecretsPage(RoutablePageMixin, Page):
-    class Meta:
-        abstract = True
+# class AbstractSecretsPage(RoutablePageMixin, Page):
+#     class Meta:
+#         abstract = True
 
-    @route(r"^$")
-    def default(self, *args, **kwargs):
-        # TODO: render mixin view methods from django secret sharing
-        raise Http404()
+#     @route(r"^$")
+#     def default(self, *args, **kwargs):
+#         # TODO: render mixin view methods from django secret sharing
+#         raise Http404()
 
-    @route(r"^(\w+)/$", name="url_part")
-    def url_part(self, request, url_part=None, *args, **kwargs):
-        # TODO: render mixin view methods from django secret sharing
+#     @route(r"^(\w+)/$", name="url_part")
+#     def url_part(self, request, url_part=None, *args, **kwargs):
+#         # TODO: render mixin view methods from django secret sharing
 
-        context = self.get_context(request, *args, **kwargs)
+#         context = self.get_context(request, *args, **kwargs)
 
-        try:
-            signed_id, key, _iv = parse_url_part(url_part)
-        except ValueError:
-            raise Http404()
+#         try:
+#             signed_id, key, _iv = parse_url_part(url_part)
+#         except ValueError:
+#             raise Http404()
 
-        secret_id = validate_signed_id(signed_id, salt=key)
+#         secret_id = validate_signed_id(signed_id, salt=key)
 
-        get_object_or_404(Secret.objects.get_non_erased(), id=uuid.UUID(secret_id))
+#         get_object_or_404(Secret.objects.get_non_erased(), id=uuid.UUID(secret_id))
 
-        context.update(
-            {"secret_url_part": url_part, "api_base_url": settings.API_BASE_URL}
-        )
+#         context.update(
+#             {"secret_url_part": url_part, "api_base_url": settings.API_BASE_URL}
+#         )
 
-        return TemplateResponse(request, self.template, context)
+#         return TemplateResponse(request, self.template, context)
