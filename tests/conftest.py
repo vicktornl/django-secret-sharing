@@ -25,4 +25,5 @@ def pytest_configure():
             "django.contrib.messages.middleware.MessageMiddleware",
             "django.middleware.clickjacking.XFrameOptionsMiddleware",
         ],
+        SECRET_KEY="tests",
     )
