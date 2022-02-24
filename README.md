@@ -1,7 +1,7 @@
 # Django Secret Sharing
 
 [![Version](https://img.shields.io/pypi/v/django-secret-sharing.svg?style=flat)](https://pypi.python.org/pypi/django-secret-sharing/)
-![CI](https://github.com/vicktornl/django-secret-sharing/actions/workflows/ci/badge.svg)
+![CI](https://github.com/vicktornl/django-secret-sharing/actions/workflows/ci.yml/badge.svg)
 
 
 A secure sharing app for Django.
