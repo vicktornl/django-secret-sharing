@@ -2,6 +2,7 @@ from django.http import Http404
 from django.urls import reverse
 from django.views import generic
 
+from django_secret_sharing.exceptions import DecryptError
 from django_secret_sharing.forms import CreateSecretForm
 from django_secret_sharing.mixins import SecretsMixin
 
@@ -40,6 +41,6 @@ class ViewSecretView(SecretsMixin, generic.TemplateView):
         try:
             hash = kwargs["hash"]
             context["secret"] = self.decrypt_secret(hash)
-        except:
+        except DecryptError:
             raise Http404()
         return context

@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import (
     sensitive_post_parameters,
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django_secret_sharing import serializers
+from django_secret_sharing.exceptions import DecryptError
 from django_secret_sharing.mixins import SecretsMixin
 from django_secret_sharing.models import Secret
 
@@ -31,5 +33,8 @@ class SecretRetrieveView(SecretsMixin, APIView):
         ser = serializers.SecretRetrieveSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         url_part = ser.data.get("url_part")
-        decrypted_value = self.decrypt_secret(url_part)
+        try:
+            decrypted_value = self.decrypt_secret(url_part)
+        except DecryptError:
+            raise Http404()
         return Response({"value": decrypted_value})
