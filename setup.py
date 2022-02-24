@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 install_requires = [
-    "django>=3",
+    "django>=2.2.8",
     "djangorestframework>=3",
     "pycrypto>=2",
 ]
