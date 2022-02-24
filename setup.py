@@ -4,7 +4,6 @@ install_requires = [
     "django>=3",
     "djangorestframework>=3",
     "pycrypto>=2",
-    "django-crispy-forms>=1.8",
 ]
 
 test_require = [

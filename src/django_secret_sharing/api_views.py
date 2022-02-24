@@ -14,7 +14,7 @@ from django_secret_sharing.models import Secret
 
 @method_decorator(sensitive_variables(), name="dispatch")
 @method_decorator(sensitive_post_parameters(), name="dispatch")
-class SecretCreateView(APIView, SecretsMixin):
+class SecretCreateView(SecretsMixin, APIView):
     def post(self, request):
         ser = serializers.SecretCreateSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -24,15 +24,12 @@ class SecretCreateView(APIView, SecretsMixin):
 
 @method_decorator(sensitive_variables(), name="dispatch")
 @method_decorator(sensitive_post_parameters(), name="dispatch")
-class SecretRetrieveView(APIView, SecretsMixin):
+class SecretRetrieveView(SecretsMixin, APIView):
     permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        return Secret.objects.get_non_erased()
 
     def post(self, request):
         ser = serializers.SecretRetrieveSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         url_part = ser.data.get("url_part")
-        decrypted_value = self.decrypt_secret(url_part, queryset=self.get_queryset())
+        decrypted_value = self.decrypt_secret(url_part)
         return Response({"value": decrypted_value})

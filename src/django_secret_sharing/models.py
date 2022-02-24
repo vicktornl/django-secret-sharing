@@ -8,11 +8,6 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-# from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-# from wagtail.core.models import Page
-
-# from django_secret_sharing.utils import parse_url_part, validate_signed_id
-
 
 class MutationDateModel(models.Model):
     created_at = models.DateTimeField(
@@ -47,34 +42,3 @@ class Secret(MutationDateModel):
     class Meta:
         verbose_name = _("Secret")
         verbose_name_plural = _("Secrets")
-
-
-# class AbstractSecretsPage(RoutablePageMixin, Page):
-#     class Meta:
-#         abstract = True
-
-#     @route(r"^$")
-#     def default(self, *args, **kwargs):
-#         # TODO: render mixin view methods from django secret sharing
-#         raise Http404()
-
-#     @route(r"^(\w+)/$", name="url_part")
-#     def url_part(self, request, url_part=None, *args, **kwargs):
-#         # TODO: render mixin view methods from django secret sharing
-
-#         context = self.get_context(request, *args, **kwargs)
-
-#         try:
-#             signed_id, key, _iv = parse_url_part(url_part)
-#         except ValueError:
-#             raise Http404()
-
-#         secret_id = validate_signed_id(signed_id, salt=key)
-
-#         get_object_or_404(Secret.objects.get_non_erased(), id=uuid.UUID(secret_id))
-
-#         context.update(
-#             {"secret_url_part": url_part, "api_base_url": settings.API_BASE_URL}
-#         )
-
-#         return TemplateResponse(request, self.template, context)

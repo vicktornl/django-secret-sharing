@@ -6,8 +6,8 @@ from django_secret_sharing.forms import CreateSecretForm
 from django_secret_sharing.mixins import SecretsMixin
 
 
-class CreateSecretView(generic.FormView, SecretsMixin):
-    template_name = "secrets/index.html"
+class CreateSecretView(SecretsMixin, generic.FormView):
+    template_name = "django_secret_sharing/create.html"
     form_class = CreateSecretForm
 
     def get_success_url(self):
@@ -15,30 +15,31 @@ class CreateSecretView(generic.FormView, SecretsMixin):
 
     def form_valid(self, form):
         secret = self.generate_url_part(form.cleaned_data)
-        secret_url = self.request.build_absolute_uri(
-            reverse("django_secret_sharing:retrieve", kwargs={"hash": secret})
-        )
-        return self.render_to_response(self.get_context_data(secret_url=secret_url))
+        secret_url = self.get_secret_url(secret)
+        context = self.get_context_data(secret_url=secret_url)
+        return self.render_to_response(context)
 
 
-class RetreiveSecretView(generic.TemplateView, SecretsMixin):
-    template_name = "secrets/retrieve.html"
+class RetreiveSecretView(SecretsMixin, generic.TemplateView):
+    template_name = "django_secret_sharing/retrieve.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if not self.validate_secret(kwargs["hash"]):
+        hash = kwargs["hash"]
+        if not self.validate_secret(hash):
             raise Http404()
-        context["url_part"] = kwargs["hash"]
+        context["url_part"] = hash
         return context
 
 
-class ViewSecretView(generic.TemplateView, SecretsMixin):
-    template_name = "secrets/view.html"
+class ViewSecretView(SecretsMixin, generic.TemplateView):
+    template_name = "django_secret_sharing/view.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            context["secret"] = self.decrypt_secret(kwargs["hash"])
+            hash = kwargs["hash"]
+            context["secret"] = self.decrypt_secret(hash)
         except:
             raise Http404()
         return context
