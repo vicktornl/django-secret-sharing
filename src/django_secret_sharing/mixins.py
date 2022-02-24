@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core import signing
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -21,8 +20,8 @@ class SecretsMixin:
 
     def generate_url_part(self, data):
 
-        key = get_random_string(settings.SECRETS_AES_KEY_LENGTH)
-        iv = get_random_string(settings.SECRETS_AES_IV_LENGTH)
+        key = get_random_string(32)
+        iv = get_random_string(16)
 
         encrypted_value = encrypt_value(data.get("value"), key=key, iv=iv)
 

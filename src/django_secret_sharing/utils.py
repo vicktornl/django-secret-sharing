@@ -1,5 +1,4 @@
 from Crypto.Cipher import AES
-from django.conf import settings
 from django.core import signing
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -24,10 +23,8 @@ def get_url_part(signed_id, key, iv):
 def parse_url_part(url_part):
     decoded_url_part = urlsafe_base64_decode(url_part).decode(URL_PART_ENCODING)
 
-    signed_id_length = len(decoded_url_part) - (
-        settings.SECRETS_AES_KEY_LENGTH + settings.SECRETS_AES_IV_LENGTH
-    )
-    iv_length = settings.SECRETS_AES_IV_LENGTH
+    iv_length = 16
+    signed_id_length = len(decoded_url_part) - (32 + iv_length)
 
     signed_id = decoded_url_part[:signed_id_length]
     key = decoded_url_part[signed_id_length:-iv_length]
