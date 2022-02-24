@@ -8,9 +8,11 @@ install_requires = [
 
 test_require = [
     "black",
+    "coverage",
     "flake8",
     "isort",
     "pytest",
+    "pytest-cov",
     "pytest-django",
 ]
 
