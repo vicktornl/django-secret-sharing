@@ -9,9 +9,9 @@ from django_secret_sharing.exceptions import DecryptError
 from django_secret_sharing.forms import CreateSecretForm
 from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import (
+    build_url,
     decrypt_value,
     encrypt_value,
-    get_url_part,
     parse_url_part,
     validate_signed_id,
 )
@@ -31,7 +31,7 @@ class SecretsMixin:
 
         signed_id = signing.dumps(str(secret_instance.id), salt=key)
 
-        return get_url_part(signed_id, key, iv)
+        return build_url(signed_id, key, iv)
 
     def decrypt_secret(self, url_part):
         try:
