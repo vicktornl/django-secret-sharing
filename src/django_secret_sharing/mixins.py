@@ -1,10 +1,12 @@
 from django.core import signing
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 
 from django_secret_sharing.exceptions import DecryptError
+from django_secret_sharing.forms import CreateSecretForm
 from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import (
     decrypt_value,
@@ -50,7 +52,10 @@ class SecretsMixin:
         return decrypted_value_utf8
 
     def validate_secret(self, url_part):
-        signed_id, key, iv = parse_url_part(url_part)
+        try:
+            signed_id, key, iv = parse_url_part(url_part)
+        except UnicodeDecodeError:
+            raise DecryptError()
 
         secret_id = validate_signed_id(signed_id, salt=key)
         try:
@@ -62,3 +67,27 @@ class SecretsMixin:
         return self.request.build_absolute_uri(
             reverse("django_secret_sharing:retrieve", kwargs={"hash": secret})
         )
+
+
+class ViewSecretMixin(SecretsMixin):
+    def get_view_context(self, hash):
+        context = {}
+        try:
+            context["secret"] = self.decrypt_secret(hash)
+        except DecryptError:
+            raise Http404()
+        return context
+
+
+class RetrieveSecretMixin(SecretsMixin):
+    def get_retrieve_context(self, hash):
+        context = {}
+        if not self.validate_secret(hash):
+            raise Http404()
+        context["url_part"] = hash
+        return context
+
+
+class CreateSecretMixin(SecretsMixin):
+    def get_create_context(self):
+        return {"form": CreateSecretForm()}

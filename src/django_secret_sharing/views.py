@@ -1,10 +1,12 @@
-from django.http import Http404
 from django.urls import reverse
 from django.views import generic
 
-from django_secret_sharing.exceptions import DecryptError
 from django_secret_sharing.forms import CreateSecretForm
-from django_secret_sharing.mixins import SecretsMixin
+from django_secret_sharing.mixins import (
+    RetrieveSecretMixin,
+    SecretsMixin,
+    ViewSecretMixin,
+)
 
 
 class CreateSecretView(SecretsMixin, generic.FormView):
@@ -21,26 +23,21 @@ class CreateSecretView(SecretsMixin, generic.FormView):
         return self.render_to_response(context)
 
 
-class RetreiveSecretView(SecretsMixin, generic.TemplateView):
+class RetreiveSecretView(RetrieveSecretMixin, SecretsMixin, generic.TemplateView):
     template_name = "django_secret_sharing/retrieve.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         hash = kwargs["hash"]
-        if not self.validate_secret(hash):
-            raise Http404()
-        context["url_part"] = hash
+        context.update(self.get_retrieve_context(hash))
         return context
 
 
-class ViewSecretView(SecretsMixin, generic.TemplateView):
+class ViewSecretView(ViewSecretMixin, SecretsMixin, generic.TemplateView):
     template_name = "django_secret_sharing/view.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            hash = kwargs["hash"]
-            context["secret"] = self.decrypt_secret(hash)
-        except DecryptError:
-            raise Http404()
+        hash = kwargs["hash"]
+        context.update(self.get_view_context(hash))
         return context
