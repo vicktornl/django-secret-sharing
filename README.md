@@ -8,7 +8,7 @@ A secure sharing app for Django.
 
 ## Features
 
-* Keep sensitive information out of your chat logs and email via a secure sharing protocal
+* Keep sensitive information out of your chat logs and email via a secure sharing protocol
 * REST API
 * One time secrets
 
@@ -77,6 +77,6 @@ Override the default templates with your own
 **django_secret_sharing/view.html**
 
 ```
-<textarea disabled>{{ secret }}</textarea>
+<textarea disabled>{{ value }}</textarea>
 <a href="{% url 'django_secret_sharing:create' %}">Create</a>
 ```
