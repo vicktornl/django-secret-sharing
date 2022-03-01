@@ -7,21 +7,31 @@ from django.utils.crypto import get_random_string
 
 from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import (
-    build_url,
+    URL_PART_ENCODING,
     create_secret,
     decrypt_value,
     encrypt_value,
-    parse_url_part,
+    get_secret_by_url_part,
 )
 
 
 @pytest.mark.django_db
 def test_create_secret():
-    value = "My secret value"
-    secret, url = create_secret(value)
-    assert secret
+    raw_value = "My secret value"
+    secret, url_part = create_secret(raw_value)
+    assert not secret.erased
+    assert secret.value != raw_value
+    assert str(secret.id) not in url_part
+
+
+@pytest.mark.django_db
+def test_get_secret():
+    raw_value = "My secret value"
+    secret, url_part = create_secret("My secret value")
+    secret, value = get_secret_by_url_part(url_part)
+    assert not secret.erased
     assert secret.value != value
-    assert url
+    assert value == raw_value
 
 
 def test_encrypt_and_decrypt():
@@ -30,22 +40,6 @@ def test_encrypt_and_decrypt():
     iv = get_random_string(16)
 
     encrypted = encrypt_value(text, key=key, iv=iv)
-
     decrypted = decrypt_value(encrypted, key=key, iv=iv)
 
-    assert decrypted == text.encode("utf-8")
-
-
-def test_build_url_and_parse_url_part():
-    key = get_random_string(32)
-    iv = get_random_string(16)
-
-    signed_id = signing.dumps(str(uuid.uuid4()), key=key)
-
-    url_part = build_url(signed_id, key, iv)
-
-    parsed_signed_id, parsed_key, parsed_iv = parse_url_part(url_part)
-
-    assert parsed_signed_id == str(signed_id)
-    assert parsed_key == key
-    assert parsed_iv == iv
+    assert decrypted == text.encode(URL_PART_ENCODING)

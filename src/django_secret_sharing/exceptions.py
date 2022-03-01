@@ -1,2 +1,2 @@
-class DecryptError(Exception):
+class SecretNotFound(Exception):
     pass
