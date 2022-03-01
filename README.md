@@ -8,7 +8,7 @@ A secure sharing app for Django.
 
 ## Features
 
-* Keep sensitive information out of your chat logs and email via a secure sharing protocal
+* Keep sensitive information out of your chat logs and email via a secure sharing protocol
 * REST API
 * One time secrets
 
