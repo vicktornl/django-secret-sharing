@@ -40,6 +40,9 @@ class Migration(migrations.Migration):
                 ),
                 ("erased_at", models.DateTimeField(blank=True, null=True)),
             ],
-            options={"verbose_name": "Secret", "verbose_name_plural": "Secrets",},
+            options={
+                "verbose_name": "Secret",
+                "verbose_name_plural": "Secrets",
+            },
         ),
     ]

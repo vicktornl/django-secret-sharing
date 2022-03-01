@@ -61,7 +61,8 @@ def test_view_secret(client):
 def test_view_secret_not_found(client):
     res = client.get(
         reverse(
-            "django_secret_sharing:view", kwargs={"url_part": "icantfindthisurlpart"},
+            "django_secret_sharing:view",
+            kwargs={"url_part": "icantfindthisurlpart"},
         )
     )
     assert res.status_code == 404
