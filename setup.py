@@ -6,7 +6,11 @@ install_requires = [
     "pycrypto>=2",
 ]
 
-tests_requires = [
+aws_requires = [
+    "boto3>=1.16",
+]
+
+test_requires = [
     "black",
     "coverage",
     "flake8",
@@ -22,8 +26,8 @@ setup(
     description="",
     author="R. Moorman <rob@vicktor.nl>",
     install_requires=install_requires,
-    tests_requires=tests_requires,
-    extras_require={"test": tests_requires},
+    tests_requires=test_requires,
+    extras_require={"aws": aws_requires, "test": test_requires},
     package_dir={"": "src"},
     packages=find_packages("src"),
     include_package_data=True,

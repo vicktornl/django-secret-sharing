@@ -17,5 +17,6 @@ class CreateSecretForm(forms.Form):
         required=False,
     )
     value = forms.CharField(
-        widget=forms.Textarea(attrs={"placeholder": _("Secret content here")})
+        required=False,
+        widget=forms.Textarea(attrs={"placeholder": _("Secret content here")}),
     )

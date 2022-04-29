@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from django_secret_sharing import settings
+from django_secret_sharing.forms import CreateSecretForm
 
 
 class SecretCreateSerializer(serializers.Serializer):
@@ -12,3 +13,10 @@ class SecretCreateSerializer(serializers.Serializer):
 
 class SecretRetrieveSerializer(serializers.Serializer):
     url_part = serializers.CharField(required=True)
+
+
+class SecretUploadFileURLSerializer(serializers.Serializer):
+    filename = serializers.CharField(required=True)
+    expires_in = serializers.ChoiceField(
+        choices=CreateSecretForm.EXPIRY_CHOICES, default=3600
+    )

@@ -7,12 +7,19 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.module_loading import import_string
 
 from django_secret_sharing import settings
 from django_secret_sharing.exceptions import SecretNotFound
 from django_secret_sharing.models import Secret
+from django_secret_sharing.settings import BACKEND
 
 URL_PART_ENCODING = "utf-8"
+
+
+def get_backend():
+    backend = import_string(BACKEND)
+    return backend()
 
 
 def encrypt_value(value, key, iv):

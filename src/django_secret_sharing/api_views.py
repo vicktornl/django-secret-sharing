@@ -1,3 +1,5 @@
+import uuid
+
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
@@ -8,6 +10,7 @@ from rest_framework.views import APIView
 
 from django_secret_sharing import serializers
 from django_secret_sharing.exceptions import SecretNotFound
+from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import create_secret, get_secret_by_url_part
 
 
@@ -47,3 +50,25 @@ class SecretRetrieveView(APIView):
             secret.erase()
 
         return Response({"value": value})
+
+
+@method_decorator(never_cache, name="dispatch")
+@method_decorator(sensitive_post_parameters("url_part"), name="dispatch")
+class SecretUploadFileURLView(APIView):
+    def post(self, request):
+        ser = serializers.SecretUploadFileURLSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+
+        id = str(uuid.uuid4())
+        filename = ser.data.get("filename")
+        expires_in = ser.data.get("expires_in")
+        backend = get_backend()
+        url, fields = backend.get_upload_url(id, filename, expires_in=expires_in)
+
+        return Response(
+            {
+                "filename": filename,
+                "url": url,
+                "fields": fields,
+            }
+        )
