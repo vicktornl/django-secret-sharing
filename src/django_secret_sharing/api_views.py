@@ -8,8 +8,6 @@ from rest_framework.views import APIView
 
 from django_secret_sharing import serializers
 from django_secret_sharing.exceptions import SecretNotFound
-from django_secret_sharing.mixins import SecretsMixin
-from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import create_secret, get_secret_by_url_part
 
 
@@ -27,7 +25,7 @@ class SecretCreateView(APIView):
 
 @method_decorator(never_cache, name="dispatch")
 @method_decorator(sensitive_post_parameters("url_part"), name="dispatch")
-class SecretRetrieveView(SecretsMixin, APIView):
+class SecretRetrieveView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
