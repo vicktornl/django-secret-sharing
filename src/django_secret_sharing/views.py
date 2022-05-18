@@ -1,15 +1,15 @@
 from django.http import Http404
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
+from django_secret_sharing import settings
 from django_secret_sharing.exceptions import SecretNotFound
 from django_secret_sharing.forms import CreateSecretForm
-from django_secret_sharing import settings
 from django_secret_sharing.utils import create_secret, get_secret_by_url_part
-from django.utils.crypto import get_random_string
 
 
 @method_decorator(never_cache, name="dispatch")
@@ -22,7 +22,10 @@ class CreateSecretView(generic.FormView):
         return reverse("django_secret_sharing:create")
 
     def form_valid(self, form):
-        secret, url_part = create_secret(form.cleaned_data.get("value"))
+        secret, url_part = create_secret(
+            value=form.cleaned_data.get("value"),
+            expires_in=form.cleaned_data.get("expires"),
+        )
 
         context = super().get_context_data()
         context["secret_url"] = self.request.build_absolute_uri(
@@ -69,7 +72,6 @@ class ViewSecretView(generic.TemplateView):
 
 
 class GeneratePasswordView(CreateSecretView):
-
     def get_initial(self):
         initial = super().get_initial()
         initial["value"] = get_random_string(settings.PASSWORD_LENGTH)

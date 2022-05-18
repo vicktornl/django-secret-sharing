@@ -77,6 +77,7 @@ def test_view_erased_secret_not_found(client):
     )
     assert res.status_code == 404
 
+
 @pytest.mark.django_db
 def test_generate_password_view(client):
     res = client.get(

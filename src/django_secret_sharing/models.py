@@ -28,6 +28,7 @@ class Secret(MutationDateModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     value = models.BinaryField(blank=True, null=True)
     erased = models.BooleanField(default=False)
+    expires_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     erased_at = models.DateTimeField(blank=True, null=True)
 
@@ -38,6 +39,11 @@ class Secret(MutationDateModel):
         self.erased = True
         self.erased_at = timezone.now()
         self.save()
+
+    def has_expired(self):
+        if self.expires_at:
+            return timezone.now() > self.expires_at
+        return False
 
     class Meta:
         verbose_name = _("Secret")
