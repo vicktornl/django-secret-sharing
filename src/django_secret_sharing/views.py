@@ -7,7 +7,9 @@ from django.views.decorators.debug import sensitive_post_parameters
 
 from django_secret_sharing.exceptions import SecretNotFound
 from django_secret_sharing.forms import CreateSecretForm
+from django_secret_sharing import settings
 from django_secret_sharing.utils import create_secret, get_secret_by_url_part
+from django.utils.crypto import get_random_string
 
 
 @method_decorator(never_cache, name="dispatch")
@@ -64,3 +66,11 @@ class ViewSecretView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         context["value"] = value
         return context
+
+
+class GeneratePasswordView(CreateSecretView):
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["value"] = get_random_string(settings.PASSWORD_LENGTH)
+        return initial

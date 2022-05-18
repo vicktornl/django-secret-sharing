@@ -76,3 +76,14 @@ def test_view_erased_secret_not_found(client):
         reverse("django_secret_sharing:view", kwargs={"url_part": url_part})
     )
     assert res.status_code == 404
+
+@pytest.mark.django_db
+def test_generate_password_view(client):
+    res = client.get(
+        reverse(
+            "django_secret_sharing:generate-password",
+        )
+    )
+
+    assert res.status_code == 200
+    assert res.context["form"].initial["value"]
