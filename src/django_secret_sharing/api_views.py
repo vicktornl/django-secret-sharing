@@ -18,7 +18,9 @@ class SecretCreateView(APIView):
         ser = serializers.SecretCreateSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
 
-        secret, url_part = create_secret(ser.data.get("value"))
+        secret, url_part = create_secret(
+            value=ser.data.get("value"), expires_in=ser.data.get("expires")
+        )
 
         return Response({"url_part": url_part}, status=200)
 
