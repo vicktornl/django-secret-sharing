@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from django.urls import reverse
 
@@ -15,6 +17,18 @@ def test_create_secret(client):
 
 
 @pytest.mark.django_db
+def test_create_secret_with_expires_value(client):
+    res = client.post(
+        reverse("django_secret_sharing:create"),
+        data={"value": "My secret value", "expires": "7 days"},
+    )
+
+    assert res.status_code == 200
+    assert Secret.objects.get_non_erased().count() == 1
+    assert Secret.objects.first().expires_at
+
+
+@pytest.mark.django_db
 def test_retrieve_secret(client):
     secret, url_part = create_secret("My secret value")
     res = client.get(
@@ -23,6 +37,33 @@ def test_retrieve_secret(client):
     secret.refresh_from_db()
     assert res.status_code == 200
     assert not secret.erased
+
+
+@pytest.mark.django_db
+def test_retrieve_secret_with_expiry_time(client):
+    secret, url_part = create_secret("My secret value", expires_in="7 days")
+    res = client.get(
+        reverse("django_secret_sharing:retrieve", kwargs={"url_part": url_part})
+    )
+    secret.refresh_from_db()
+    assert res.status_code == 200
+    assert not secret.erased
+    assert secret.expires_at
+
+
+@pytest.mark.django_db
+def test_retrieve_expired_secret(client):
+    secret, url_part = create_secret("My secret value", expires_in="7 days")
+    secret.expires_at = secret.expires_at - timedelta(days=7)
+    secret.save()
+    res = client.get(
+        reverse("django_secret_sharing:retrieve", kwargs={"url_part": url_part})
+    )
+
+    secret.refresh_from_db()
+    assert res.status_code == 404
+    assert secret.erased
+    assert not secret.expires_at
 
 
 @pytest.mark.django_db

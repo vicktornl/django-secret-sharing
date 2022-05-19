@@ -37,6 +37,7 @@ class Secret(MutationDateModel):
     def erase(self, *args, **kwargs):
         self.value = None
         self.erased = True
+        self.expires_at = None
         self.erased_at = timezone.now()
         self.save()
 
