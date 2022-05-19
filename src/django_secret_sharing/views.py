@@ -25,6 +25,7 @@ class CreateSecretView(generic.FormView):
         secret, url_part = create_secret(
             value=form.cleaned_data.get("value"),
             expires_in=form.cleaned_data.get("expires"),
+            one_time=form.cleaned_data.get("one_time"),
         )
 
         context = super().get_context_data()
@@ -64,7 +65,8 @@ class ViewSecretView(generic.TemplateView):
             raise Http404()
 
         # Mark the secret as erased (onetimesecret)
-        secret.erase()
+        if secret.one_time:
+            secret.erase()
 
         context = super().get_context_data(**kwargs)
         context["value"] = value

@@ -10,15 +10,6 @@ from django_secret_sharing.utils import create_secret
 @pytest.mark.django_db
 def test_create_secret(client):
     res = client.post(
-        reverse("django_secret_sharing:create"), data={"value": "My secret value"}
-    )
-    assert res.status_code == 200
-    assert Secret.objects.get_non_erased().count() == 1
-
-
-@pytest.mark.django_db
-def test_create_secret_with_expires_value(client):
-    res = client.post(
         reverse("django_secret_sharing:create"),
         data={"value": "My secret value", "expires": "7 days"},
     )
@@ -129,3 +120,21 @@ def test_generate_password_view(client):
 
     assert res.status_code == 200
     assert res.context["form"].initial["value"]
+
+
+@pytest.mark.django_db
+def test_multipule_time_secret(client):
+    secret, url_part = create_secret(
+        "My secret value", expires_in="7 days", one_time=False
+    )
+
+    res = client.get(
+        reverse("django_secret_sharing:retrieve", kwargs={"url_part": url_part})
+    )
+
+    res2 = client.get(
+        reverse("django_secret_sharing:retrieve", kwargs={"url_part": url_part})
+    )
+
+    assert res.status_code == 200
+    assert res2.status_code == 200

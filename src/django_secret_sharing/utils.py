@@ -28,12 +28,14 @@ def build_url_part(signed_id, key, iv):
     return urlsafe_base64_encode(f"{signed_id}{key}{iv}".encode(URL_PART_ENCODING))
 
 
-def create_secret(value: str, expires_in=None) -> Tuple[Secret, str]:
+def create_secret(value: str, expires_in=None, one_time=True) -> Tuple[Secret, str]:
     key = get_random_string(32)
     iv = get_random_string(16)
     expiry_date = get_date_by_expires_value(expires_in)
     encrypted_value = encrypt_value(value, key=key, iv=iv)
-    secret = Secret.objects.create(value=encrypted_value, expires_at=expiry_date)
+    secret = Secret.objects.create(
+        value=encrypted_value, expires_at=expiry_date, one_time=one_time
+    )
     signed_id = signing.dumps(str(secret.id), salt=key)
     url_part = build_url_part(signed_id, key, iv)
     return secret, url_part

@@ -10,9 +10,8 @@ EXPIRES_CHOICES = (
 
 class SecretCreateSerializer(serializers.Serializer):
     value = serializers.CharField(required=True)
-    expires = serializers.ChoiceField(
-        choices=EXPIRES_CHOICES, allow_blank=True, required=False
-    )
+    one_time = serializers.BooleanField(required=False, default=True)
+    expires = serializers.ChoiceField(choices=EXPIRES_CHOICES)
 
 
 class SecretRetrieveSerializer(serializers.Serializer):

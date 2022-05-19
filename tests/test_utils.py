@@ -1,13 +1,9 @@
-import uuid
 from datetime import timedelta
 
 import pytest
-from django.conf import settings
-from django.core import signing
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
-from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import (
     URL_PART_ENCODING,
     create_secret,

@@ -19,7 +19,9 @@ class SecretCreateView(APIView):
         ser.is_valid(raise_exception=True)
 
         secret, url_part = create_secret(
-            value=ser.data.get("value"), expires_in=ser.data.get("expires")
+            value=ser.data.get("value"),
+            expires_in=ser.data.get("expires"),
+            one_time=ser.data.get("one_time"),
         )
 
         return Response({"url_part": url_part}, status=200)
@@ -41,7 +43,7 @@ class SecretRetrieveView(APIView):
         except SecretNotFound:
             raise Http404()
 
-        # Mark the secret as erased (onetimesecret)
-        secret.erase()
+        if secret.one_time:
+            secret.erase()
 
         return Response({"value": value})
