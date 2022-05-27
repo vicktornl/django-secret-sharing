@@ -8,6 +8,7 @@ from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
+from django_secret_sharing import settings
 from django_secret_sharing.exceptions import SecretNotFound
 from django_secret_sharing.models import Secret
 
@@ -28,13 +29,13 @@ def build_url_part(signed_id, key, iv):
     return urlsafe_base64_encode(f"{signed_id}{key}{iv}".encode(URL_PART_ENCODING))
 
 
-def create_secret(value: str, expires_in=None, one_time=True) -> Tuple[Secret, str]:
+def create_secret(value: str, expires_in=None, view_once=True) -> Tuple[Secret, str]:
     key = get_random_string(32)
     iv = get_random_string(16)
     expiry_date = get_date_by_expires_value(expires_in)
     encrypted_value = encrypt_value(value, key=key, iv=iv)
     secret = Secret.objects.create(
-        value=encrypted_value, expires_at=expiry_date, one_time=one_time
+        value=encrypted_value, expires_at=expiry_date, view_once=view_once
     )
     signed_id = signing.dumps(str(secret.id), salt=key)
     url_part = build_url_part(signed_id, key, iv)
@@ -78,10 +79,7 @@ def validate_signed_id(signed_id, salt):
 
 
 def get_date_by_expires_value(expires_value):
-    if expires_value == "1 hour":
-        return timezone.now() + timedelta(hours=1)
-    if expires_value == "1 day":
-        return timezone.now() + timedelta(days=1)
-    if expires_value == "7 days":
-        return timezone.now() + timedelta(days=7)
-    return None
+    try:
+        return timezone.now() + timedelta(seconds=int(expires_value))
+    except:
+        return None

@@ -1,18 +1,15 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-EXPIRES_CHOICES = (
-    (None, _("Select expiry time")),
-    ("1 hour", _("1 hour")),
-    ("1 day", _("1 day")),
-    ("7 days", _("7 days")),
-)
+from django_secret_sharing import settings
+
+EXPIRES_CHOICES = settings.EXPIRY_TIME_OPTIONS
 
 
 class CreateSecretForm(forms.Form):
     expires = forms.ChoiceField(label=_("Expires in"), choices=EXPIRES_CHOICES)
-    one_time = forms.BooleanField(
-        label=_("One time secret"),
+    view_once = forms.BooleanField(
+        label=_("View once"),
         widget=forms.CheckboxInput(attrs={"checked": "checked"}),
         required=False,
     )

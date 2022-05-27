@@ -6,12 +6,14 @@ from django.urls import reverse
 from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import create_secret
 
+ONE_HOUR = 60 * 60
+
 
 @pytest.mark.django_db
 def test_create_secret(client):
     res = client.post(
         reverse("django_secret_sharing:create"),
-        data={"value": "My secret value", "expires": "7 days"},
+        data={"value": "My secret value", "expires": ONE_HOUR, "view_once": True},
     )
 
     assert res.status_code == 200
@@ -32,7 +34,7 @@ def test_retrieve_secret(client):
 
 @pytest.mark.django_db
 def test_retrieve_secret_with_expiry_time(client):
-    secret, url_part = create_secret("My secret value", expires_in="7 days")
+    secret, url_part = create_secret("My secret value", expires_in=ONE_HOUR)
     res = client.get(
         reverse("django_secret_sharing:retrieve", kwargs={"url_part": url_part})
     )
@@ -44,7 +46,7 @@ def test_retrieve_secret_with_expiry_time(client):
 
 @pytest.mark.django_db
 def test_retrieve_expired_secret(client):
-    secret, url_part = create_secret("My secret value", expires_in="7 days")
+    secret, url_part = create_secret("My secret value", expires_in=ONE_HOUR)
     secret.expires_at = secret.expires_at - timedelta(days=7)
     secret.save()
     res = client.get(
@@ -123,9 +125,9 @@ def test_generate_password_view(client):
 
 
 @pytest.mark.django_db
-def test_multipule_time_secret(client):
+def test_view_secret_more_then_once(client):
     secret, url_part = create_secret(
-        "My secret value", expires_in="7 days", one_time=False
+        "My secret value", expires_in=ONE_HOUR, view_once=False
     )
 
     res = client.get(
@@ -138,3 +140,20 @@ def test_multipule_time_secret(client):
 
     assert res.status_code == 200
     assert res2.status_code == 200
+
+
+@pytest.mark.django_db
+def test_required_form_fields(client):
+    no_expires_res = client.post(
+        reverse("django_secret_sharing:create"),
+        data={"value": "My secret value", "expires": "", "view_once": True},
+    )
+
+    no_value_res = client.post(
+        reverse("django_secret_sharing:create"),
+        data={"value": "", "expires": ONE_HOUR, "view_once": True},
+    )
+
+    assert no_expires_res.context_data["form"]._errors["expires"]
+    assert no_value_res.context_data["form"]._errors["value"]
+    assert Secret.objects.count() == 0

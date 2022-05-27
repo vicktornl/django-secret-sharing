@@ -28,7 +28,7 @@ class Secret(MutationDateModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     value = models.BinaryField(blank=True, null=True)
     erased = models.BooleanField(default=False)
-    one_time = models.BooleanField(default=True)
+    view_once = models.BooleanField(default=True)
     expires_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     erased_at = models.DateTimeField(blank=True, null=True)

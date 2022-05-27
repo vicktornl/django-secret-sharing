@@ -13,11 +13,15 @@ from django_secret_sharing.utils import (
     get_secret_by_url_part,
 )
 
+ONE_HOUR = 60 * 60
+ONE_DAY = 60 * 60 * 24
+ONE_WEEK = 60 * 60 * 24 * 7
+
 
 @pytest.mark.django_db
 def test_create_secret():
     raw_value = "My secret value"
-    secret, url_part = create_secret(raw_value)
+    secret, url_part = create_secret(value=raw_value)
     assert not secret.erased
     assert secret.value != raw_value
     assert str(secret.id) not in url_part
@@ -45,10 +49,11 @@ def test_encrypt_and_decrypt():
 
 
 def test_get_date_by_expires_value():
-    one_hour = get_date_by_expires_value(expires_value="1 hour")
-    one_day = get_date_by_expires_value(expires_value="1 day")
-    seven_days = get_date_by_expires_value(expires_value="7 days")
-    unused_value = get_date_by_expires_value(expires_value="1 year")
+
+    one_hour = get_date_by_expires_value(expires_value=ONE_HOUR)
+    one_day = get_date_by_expires_value(expires_value=ONE_DAY)
+    seven_days = get_date_by_expires_value(expires_value=ONE_WEEK)
+    unused_value = get_date_by_expires_value(expires_value="1 year secret")
 
     assert (timezone.now() + timedelta(hours=1)).hour == one_hour.hour
     assert (timezone.now() + timedelta(days=1)).day == one_day.day
