@@ -1,5 +1,5 @@
-from datetime import timedelta
-from typing import Tuple
+from datetime import datetime, timedelta
+from typing import Optional, Tuple, Union
 
 from Crypto.Cipher import AES
 from django.core import signing
@@ -29,7 +29,9 @@ def build_url_part(signed_id, key, iv):
     return urlsafe_base64_encode(f"{signed_id}{key}{iv}".encode(URL_PART_ENCODING))
 
 
-def create_secret(value: str, expires_in=None, view_once=True) -> Tuple[Secret, str]:
+def create_secret(
+    value: str, expires_in: Optional[int] = None, view_once: Optional[bool] = True
+) -> Tuple[Secret, str]:
     key = get_random_string(32)
     iv = get_random_string(16)
     expiry_date = get_date_by_expires_value(expires_in)
@@ -78,8 +80,8 @@ def validate_signed_id(signed_id, salt):
         return None
 
 
-def get_date_by_expires_value(expires_value):
+def get_date_by_expires_value(expires_value: int) -> Union[datetime, None]:
     try:
-        return timezone.now() + timedelta(seconds=int(expires_value))
+        return timezone.now() + timedelta(seconds=expires_value)
     except:
         return None

@@ -143,17 +143,33 @@ def test_view_secret_more_then_once(client):
 
 
 @pytest.mark.django_db
-def test_required_form_fields(client):
-    no_expires_res = client.post(
-        reverse("django_secret_sharing:create"),
-        data={"value": "My secret value", "expires": "", "view_once": True},
-    )
-
-    no_value_res = client.post(
+def test_value_field_is_required(client):
+    res = client.post(
         reverse("django_secret_sharing:create"),
         data={"value": "", "expires": ONE_HOUR, "view_once": True},
     )
 
-    assert no_expires_res.context_data["form"]._errors["expires"]
-    assert no_value_res.context_data["form"]._errors["value"]
+    assert res.context_data["form"]._errors["value"]
+    assert Secret.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_expires_field_is_required(client):
+    res = client.post(
+        reverse("django_secret_sharing:create"),
+        data={"value": "My secret value", "expires": "", "view_once": True},
+    )
+
+    assert res.context_data["form"]._errors["expires"]
+    assert Secret.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_expires_value_not_in_choices(client):
+    res = client.post(
+        reverse("django_secret_sharing:create"),
+        data={"value": "My secret value", "expires": 9999999999, "view_once": True},
+    )
+
+    assert res.context_data["form"]._errors["expires"]
     assert Secret.objects.count() == 0
