@@ -10,7 +10,7 @@ EXPIRY_TIME_CHOICES = [
     (None, _("Select expiry time")),
     ((60 * 60), _("1 hour")),
     ((60 * 60 * 24), _("1 day")),
-    ((60 * 60 * 24 * 7), _("7 week")),
+    ((60 * 60 * 24 * 7), _("1 week")),
 ]
 
 

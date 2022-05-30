@@ -29,6 +29,7 @@ class CreateSecretView(generic.FormView):
         )
 
         context = super().get_context_data()
+        context["secret"] = secret
         context["secret_url"] = self.request.build_absolute_uri(
             reverse("django_secret_sharing:retrieve", kwargs={"url_part": url_part})
         )
@@ -48,6 +49,7 @@ class RetreiveSecretView(generic.TemplateView):
             raise Http404()
 
         context = super().get_context_data(**kwargs)
+        context["secret"] = secret
         context["url_part"] = url_part
         return context
 
@@ -68,6 +70,7 @@ class ViewSecretView(generic.TemplateView):
             secret.erase()
 
         context = super().get_context_data(**kwargs)
+        context["secret"] = secret
         context["value"] = value
         return context
 
