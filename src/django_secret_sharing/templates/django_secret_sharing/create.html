@@ -2,7 +2,7 @@
     <p>{{ secret_url }}</p>
     <a href="{% url 'django_secret_sharing:create' %}">Create</a>
 {% else %}
-  <form action="{% url 'django_secret_sharing:create' %}" method="post">
+  <form action="{% url 'django_secret_sharing:create' %}" method="post" novalidate>
       {% csrf_token %}
       {{ form }}
       <input type="submit" value="Submit">
