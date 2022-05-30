@@ -11,6 +11,7 @@ A secure sharing app for Django.
 * Keep sensitive information out of your chat logs and email via a secure sharing protocol
 * REST API
 * One time secrets
+* Create random passwords
 
 ## Requirements
 
@@ -64,6 +65,7 @@ Override the default templates with your own
       {% csrf_token %}
       {{ form }}
       <input type="submit" value="Submit">
+      <a href="{% url 'django_secret_sharing:generate-password' %}">Generate password</a>
   </form>
 {% endif %}
 ```
