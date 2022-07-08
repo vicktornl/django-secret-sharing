@@ -11,7 +11,7 @@ class CreateSecretForm(forms.Form):
     view_once = forms.BooleanField(
         label=_("View once"),
         help_text=_(
-            "When checked the recipient(s) will only be able to view this message once and then disappears forever"
+            "When checked the message will only be able to be viewed once and then disappears forever"
         ),
         widget=forms.CheckboxInput(attrs={"checked": "checked"}),
         required=False,
