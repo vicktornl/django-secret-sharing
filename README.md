@@ -11,6 +11,7 @@ A secure sharing app for Django.
 * Keep sensitive information out of your chat logs and email via a secure sharing protocol
 * REST API
 * One time secrets
+* Expiry dates
 * Create random passwords
 
 ## Requirements
