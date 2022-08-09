@@ -19,6 +19,7 @@ EXPIRY_TIME_CHOICES = [
 EXPIRY_TIME_CHOICES = get_setting("EXPIRY_TIME_CHOICES", default=EXPIRY_TIME_CHOICES)
 PASSWORD_LENGTH = get_setting("PASSWORD_LENGTH", default=32)
 BACKEND = get_setting(
-    "BACKEND", default=_("django_secret_sharing.backends.aws.AWSBackend")
+    "BACKEND", default="django_secret_sharing.backends.aws.AWSBackend"
 )
-AWS_BUCKET = get_setting("AWS_BUCKET", default=_(""))
+AWS_BUCKET = get_setting("AWS_BUCKET", default="")
+AWS_REGION = get_setting("AWS_REGION", default=None)

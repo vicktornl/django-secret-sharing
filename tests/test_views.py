@@ -173,3 +173,6 @@ def test_expires_value_not_in_choices(client):
 
     assert res.context_data["form"]._errors["expires"]
     assert Secret.objects.count() == 0
+
+
+# TODO: Test ref cant be manipulated in order to download other files

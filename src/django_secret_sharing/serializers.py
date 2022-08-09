@@ -8,7 +8,7 @@ from django_secret_sharing.forms import CreateSecretForm
 class SecretCreateSerializer(serializers.Serializer):
     value = serializers.CharField(required=True)
     view_once = serializers.BooleanField(required=False, default=True)
-    expires = serializers.ChoiceField(choices=settings.EXPIRY_TIME_CHOICES)
+    expires_in = serializers.ChoiceField(choices=settings.EXPIRY_TIME_CHOICES)
 
 
 class SecretRetrieveSerializer(serializers.Serializer):
@@ -17,6 +17,4 @@ class SecretRetrieveSerializer(serializers.Serializer):
 
 class SecretUploadFileURLSerializer(serializers.Serializer):
     filename = serializers.CharField(required=True)
-    expires_in = serializers.ChoiceField(
-        choices=CreateSecretForm.EXPIRY_CHOICES, default=3600
-    )
+    expires_in = serializers.ChoiceField(choices=settings.EXPIRY_TIME_CHOICES)

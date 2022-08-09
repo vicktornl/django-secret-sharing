@@ -1,11 +1,11 @@
-from typing import Tuple
+from typing import List, Tuple
 
 import boto3
 from botocore.exceptions import ClientError
 
 from django_secret_sharing.backends.base import BaseBackend
 from django_secret_sharing.exceptions import BackendError
-from django_secret_sharing.settings import AWS_BUCKET
+from django_secret_sharing.settings import AWS_BUCKET, AWS_REGION
 
 
 class AWSBackend(BaseBackend):
@@ -19,6 +19,19 @@ class AWSBackend(BaseBackend):
 
     def get_bucket(self):
         return AWS_BUCKET
+
+    def validate_file_refs(self, file_refs: List[str]) -> bool:
+        for file_ref in file_refs:
+            try:
+                res = self.client.head_object(
+                    Bucket=self.bucket,
+                    Key=file_ref,
+                )
+                if not res.get("ResponseMetadata", None):
+                    return False
+            except ClientError as err:
+                return False
+        return True
 
     def get_upload_url(
         self, id: str, filename: str, expires_in: int = 3600

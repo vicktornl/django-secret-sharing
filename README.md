@@ -13,6 +13,7 @@ A secure sharing app for Django.
 * One time secrets
 * Expiry dates
 * Create random passwords
+* Secure S3 presigned file transfers
 
 ## Requirements
 
@@ -83,3 +84,13 @@ Override the default templates with your own
 <textarea disabled>{{ value }}</textarea>
 <a href="{% url 'django_secret_sharing:create' %}">Create</a>
 ```
+
+## Anatomy of file transfers
+
+Wip
+
+## Troubleshooting
+
+###### botocore.exceptions.ClientError: An error occurred (400) when calling the HeadObject operation: Bad Request
+
+Add the `AWS_DEFAULT_REGION` environment variable, e.g. with `eu-west-1`.

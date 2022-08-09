@@ -11,7 +11,11 @@ from rest_framework.views import APIView
 from django_secret_sharing import serializers
 from django_secret_sharing.exceptions import SecretNotFound
 from django_secret_sharing.models import Secret
-from django_secret_sharing.utils import create_secret, get_secret_by_url_part
+from django_secret_sharing.utils import (
+    create_secret,
+    get_backend,
+    get_secret_by_url_part,
+)
 
 
 @method_decorator(never_cache, name="dispatch")
@@ -23,7 +27,7 @@ class SecretCreateView(APIView):
 
         secret, url_part = create_secret(
             value=ser.data.get("value"),
-            expires_in=ser.data.get("expires"),
+            expires_in=ser.data.get("expires_in"),
             view_once=ser.data.get("view_once"),
         )
 
@@ -53,7 +57,6 @@ class SecretRetrieveView(APIView):
 
 
 @method_decorator(never_cache, name="dispatch")
-@method_decorator(sensitive_post_parameters("url_part"), name="dispatch")
 class SecretUploadFileURLView(APIView):
     def post(self, request):
         ser = serializers.SecretUploadFileURLSerializer(data=request.data)

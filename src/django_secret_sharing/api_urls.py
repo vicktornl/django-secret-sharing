@@ -2,7 +2,7 @@ from django.urls import path
 
 from django_secret_sharing import api_views
 
-app_name = "django_secret_sharing_api"
+app_name = "django_secret_sharing"
 
 urlpatterns = [
     path("", api_views.SecretCreateView.as_view(), name="create"),
