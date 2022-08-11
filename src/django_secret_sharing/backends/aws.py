@@ -22,6 +22,10 @@ class AWSBackend(BaseBackend):
 
     def validate_file_refs(self, file_refs: List[str]) -> bool:
         for file_ref in file_refs:
+            # Prevent empty list items (often caused by bad javascript
+            # implementations) causing to fail, skip them instead
+            if file_ref == "":
+                continue
             try:
                 res = self.client.head_object(
                     Bucket=self.bucket,
