@@ -54,6 +54,10 @@ def create_secret(
     secret = Secret.objects.create(
         value=encrypted_value, expires_at=expiry_date, view_once=view_once
     )
+    for file_ref in file_refs:
+        if file_ref == "":
+            continue
+        File.objects.create(secret=secret, expires_in=expires_in, ref=file_ref)
     signed_id = signing.dumps(str(secret.id), salt=key)
     url_part = build_url_part(signed_id, key, iv)
     return secret, url_part

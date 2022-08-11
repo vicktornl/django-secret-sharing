@@ -20,3 +20,8 @@ class BaseBackend:
         raise NotImplementedError(
             "subclasses of BaseBackend must provide a get_upload_url() method"
         )
+
+    def get_download_url(self, ref: str) -> str:
+        raise NotImplementedError(
+            "subclasses of BaseBackend must provide a get_download_url() method"
+        )

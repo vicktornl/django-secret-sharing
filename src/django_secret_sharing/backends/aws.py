@@ -54,3 +54,17 @@ class AWSBackend(BaseBackend):
         url = res["url"]
         fields = res["fields"]
         return (url, fields)
+
+    def get_download_url(self, file) -> str:
+        try:
+            res = self.client.generate_presigned_url(
+                "get_object",
+                Params={
+                    "Bucket": self.bucket,
+                    "Key": file.ref,
+                },
+                ExpiresIn=file.expires_in,
+            )
+        except ClientError as err:
+            raise BackendError(str(err))
+        return res

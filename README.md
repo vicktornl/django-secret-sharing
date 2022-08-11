@@ -85,6 +85,15 @@ Override the default templates with your own
 
 ```
 <textarea disabled>{{ value }}</textarea>
+{% if secret.files.all %}
+<ul>
+    {% for file in secret.files.all %}
+    <li>
+        <a href="{{ file.download_url }}" target="_blank" ref="noopener noreferrer">{{ file.filename }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 <a href="{% url 'django_secret_sharing:create' %}">Create</a>
 ```
 

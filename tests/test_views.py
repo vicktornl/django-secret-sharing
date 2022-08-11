@@ -143,17 +143,6 @@ def test_view_secret_more_then_once(client):
 
 
 @pytest.mark.django_db
-def test_value_field_is_required(client):
-    res = client.post(
-        reverse("django_secret_sharing:create"),
-        data={"value": "", "expires": ONE_HOUR, "view_once": True},
-    )
-
-    assert res.context_data["form"]._errors["value"]
-    assert Secret.objects.count() == 0
-
-
-@pytest.mark.django_db
 def test_expires_field_is_required(client):
     res = client.post(
         reverse("django_secret_sharing:create"),
@@ -173,6 +162,3 @@ def test_expires_value_not_in_choices(client):
 
     assert res.context_data["form"]._errors["expires"]
     assert Secret.objects.count() == 0
-
-
-# TODO: Test ref cant be manipulated in order to download other files

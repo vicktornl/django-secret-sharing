@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from django.conf import settings
@@ -6,6 +7,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 
@@ -90,4 +92,14 @@ class AbstractFile(ExpiryModel, MutationDateModel):
 
 
 class File(AbstractFile):
-    pass
+    @cached_property
+    def filename(self):
+        head, tail = os.path.split(self.ref)
+        return tail
+
+    @cached_property
+    def download_url(self):
+        from django_secret_sharing.utils import get_backend
+
+        backend = get_backend()
+        return backend.get_download_url(self)
