@@ -26,6 +26,7 @@ class CreateSecretView(generic.FormView):
             value=form.cleaned_data.get("value"),
             expires_in=form.cleaned_data.get("expires"),
             view_once=form.cleaned_data.get("view_once"),
+            file_refs=form.cleaned_data["file_refs"],
         )
 
         context = super().get_context_data()

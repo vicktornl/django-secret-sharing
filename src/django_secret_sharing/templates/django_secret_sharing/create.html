@@ -2,10 +2,17 @@
     <p>{{ secret_url }}</p>
     <a href="{% url 'django_secret_sharing:create' %}">Create</a>
 {% else %}
-  <form action="{% url 'django_secret_sharing:create' %}" method="post" novalidate>
+  <form id="secret_form" action="{% url 'django_secret_sharing:create' %}" method="post" novalidate>
       {% csrf_token %}
       {{ form }}
+      <div id="files"></div>
+      <button type="button" id="add_file">Add file</button>
       <input type="submit" value="Submit">
       <a href="{% url 'django_secret_sharing:generate-password' %}">Generate password</a>
   </form>
 {% endif %}
+
+{% block scripts %}
+{% include "django_secret_sharing/file_transfer_simple.html" %}
+{% include "django_secret_sharing/file_transfer_scripts.html" %}
+{% endblock %}

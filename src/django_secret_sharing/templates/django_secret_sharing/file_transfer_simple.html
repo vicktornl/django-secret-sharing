@@ -1,0 +1,68 @@
+<script type="text/javascript">
+    (function(root) {
+      var form = document.getElementById('secret_form');
+  
+      if (!form) {
+        return;
+      }
+  
+      var filesEl = document.getElementById('files');
+      var addFileEl = document.getElementById('add_file');
+      var fileRefsEl = document.getElementById('id_file_refs');
+      var expiresEl = document.getElementById('id_expires');
+      var addFileInputs = [];
+  
+      // Set file_refs value
+      root.handleSecretFileUploaded = function(fileRef, file) {
+        fileRefsEl.value = fileRefsEl.value.split(",").concat(fileRef).join(",")
+      };
+
+      if (addFileEl) {
+        addFileEl.addEventListener('click', function() {
+          var input = document.createElement('input');
+          input.type = 'file';
+  
+          addFileInputs.push(input);
+  
+          filesEl.appendChild(input);
+        });
+      }
+  
+      function handleFormSubmit(event) {
+        if (addFileInputs.length) {
+          var files = [];
+  
+          addFileInputs.forEach(function(el) {
+            if (el.files.length) {
+              for (var i = 0; i < el.files.length; i++) {
+                files.push(el.files.item(i));
+              }
+            }
+          });
+        }
+  
+        if (files.length) {
+          event.preventDefault();
+  
+          var expiresIn = parseInt(expiresEl.value);
+          var uploadFilePromises = []
+  
+          files.forEach(function(file) {
+            uploadFilePromises.push(uploadFile(file, expiresIn));
+          });
+  
+          Promise.all(uploadFilePromises).then(function(values) {
+            // Remove submit handler for file uploads and submit form values with file_refs
+            form.removeEventListener('submit', handleFormSubmit);
+            form.submit();
+          }).catch(function() {
+            alert('Something went wrong during the file upload, please try again.')
+          });
+  
+          return false;
+        }
+      }
+  
+      form.addEventListener('submit', handleFormSubmit);
+    })(this);
+  </script>

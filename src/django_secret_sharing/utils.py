@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from Crypto.Cipher import AES
 from django.core import signing
@@ -7,12 +7,19 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.module_loading import import_string
 
 from django_secret_sharing import settings
 from django_secret_sharing.exceptions import SecretNotFound
-from django_secret_sharing.models import Secret
+from django_secret_sharing.models import File, Secret
+from django_secret_sharing.settings import BACKEND
 
 URL_PART_ENCODING = "utf-8"
+
+
+def get_backend():
+    backend = import_string(BACKEND)
+    return backend()
 
 
 def encrypt_value(value, key, iv):
@@ -29,8 +36,16 @@ def build_url_part(signed_id, key, iv):
     return urlsafe_base64_encode(f"{signed_id}{key}{iv}".encode(URL_PART_ENCODING))
 
 
+def create_files(file_refs: List[str]) -> List[File]:
+    files = []
+    return files
+
+
 def create_secret(
-    value: str, expires_in: Optional[int] = None, view_once: Optional[bool] = True
+    value: str,
+    expires_in: Optional[int] = None,
+    view_once: Optional[bool] = True,
+    file_refs: List[str] = [],
 ) -> Tuple[Secret, str]:
     key = get_random_string(32)
     iv = get_random_string(16)
@@ -39,6 +54,10 @@ def create_secret(
     secret = Secret.objects.create(
         value=encrypted_value, expires_at=expiry_date, view_once=view_once
     )
+    for file_ref in file_refs:
+        if file_ref == "":
+            continue
+        File.objects.create(secret=secret, expires_in=expires_in, ref=file_ref)
     signed_id = signing.dumps(str(secret.id), salt=key)
     url_part = build_url_part(signed_id, key, iv)
     return secret, url_part
