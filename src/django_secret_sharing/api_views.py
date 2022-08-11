@@ -21,6 +21,8 @@ from django_secret_sharing.utils import (
 @method_decorator(never_cache, name="dispatch")
 @method_decorator(sensitive_post_parameters("value"), name="dispatch")
 class SecretCreateView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def post(self, request):
         ser = serializers.SecretCreateSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -58,6 +60,8 @@ class SecretRetrieveView(APIView):
 
 @method_decorator(never_cache, name="dispatch")
 class SecretUploadFileURLView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     def post(self, request):
         ser = serializers.SecretUploadFileURLSerializer(data=request.data)
         ser.is_valid(raise_exception=True)

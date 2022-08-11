@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    (function(root) {
+        var uploadFileUrl = '{% url "django_secret_sharing_api:upload-file-url" %}';
+
+        function getUploadFileUrl(filename, expiresIn) {
+            return new Promise(function(resolve, reject) {
+                fetch(uploadFileUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        filename: filename,
+                        expires_in: expiresIn
+                    })
+                }).then(function(res) {
+                    res.json().then(resolve).catch(reject);
+                }).catch(reject);    
+            });
+        }
+
+        function uploadFile(file, expiresIn) {
+            return new Promise(function(resolve, reject) {
+                getUploadFileUrl(file.name, expiresIn).then(function(data) {
+                    var formData = new FormData();
+
+                    Object.entries(data.fields).forEach(([key, value]) => {
+                        formData.append(key, value);
+                    });
+
+                    formData.append('file', file);
+
+                    fetch(data.url, {
+                        method: 'POST',
+                        body: formData
+                    }).then(resolve).catch(reject);
+                }).catch(reject);
+            });
+        }
+
+        root.uploadFile = uploadFile;
+    })(this);
+</script>
