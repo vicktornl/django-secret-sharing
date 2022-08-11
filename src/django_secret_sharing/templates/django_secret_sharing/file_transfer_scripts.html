@@ -34,7 +34,15 @@
                     fetch(data.url, {
                         method: 'POST',
                         body: formData
-                    }).then(resolve).catch(reject);
+                    }).then(function(res) {
+                        if (res && res.ok) {
+                            if (root.handleSecretFileUploaded) {
+                                root.handleSecretFileUploaded.apply(null, [data.fields.key, file]);
+                            }
+                        }
+
+                        resolve(res);
+                    }).catch(reject);
                 }).catch(reject);
             });
         }

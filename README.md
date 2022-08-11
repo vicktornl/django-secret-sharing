@@ -98,11 +98,27 @@ Important to know is that the upload path is generated via the backend and it's 
 
 Make sure before submitting the form the files are uploaded (e.g. show a user friendly progress bar during this process).
 
-In order to provide a interface for uploading files and put the value in the `file_refs` input JavaScript is needed. As this implementation is very client specific, it's up to to build that part of the code. Although, for the very minimalistic implementation (and example), we offer a default JavaScript implementation; see `django_secret_sharing/create.html`. We do recommend build your own with e.g. a proper drag & drop interface.
+In order to provide a interface for uploading files and put the value in the `file_refs` input JavaScript is needed. As this implementation is very client specific, it's up to to build that part of the code. Although, for the very minimalistic implementation (and example), we offer a default JavaScript implementation; see `django_secret_sharing/file_transfer_simple.html`. We do recommend build your own with e.g. a proper drag & drop interface.
 
 You can also only include the `uploadFile` JavaScript method by including `django_secret_sharing/file_transfer_scripts.html` into your template and use it with your bespoke JavaScript implementation.
 
 Note: make sure your AWS S3 bucket is set to private and CORS permissions are setup correctly (advice is to keep the rules as strict as possible for best security measurements).
+
+### file_transfer_scripts.html
+
+`window.handleSecretFileUploaded`
+
+This method can optionally be defined in your JavaScript in order to handle successfull file upload (tip: use it for setting the `file_refs` value).
+
+Example:
+
+```javascript
+const fileRefsInput = document.getElementById('id_file_refs');
+
+window.handleSecretFileUploaded = (fileRef, file) => {
+  fileRefsInput.value = fileRefsInput.value.split(",").concat(fileRef).join(",")
+};
+```
 
 ## Troubleshooting
 

@@ -25,7 +25,7 @@ class CreateSecretForm(forms.Form):
     )
     file_refs = forms.CharField(
         required=False,
-        # widget=forms.HiddenInput(),
+        widget=forms.HiddenInput(),
     )
 
     def clean_file_refs(self):

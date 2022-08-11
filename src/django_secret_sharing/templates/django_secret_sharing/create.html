@@ -13,64 +13,6 @@
 {% endif %}
 
 {% block scripts %}
+{% include "django_secret_sharing/file_transfer_simple.html" %}
 {% include "django_secret_sharing/file_transfer_scripts.html" %}
-{% endblock %}
-
-{% block extra_scripts %}
-<script type="text/javascript">
-  (function(root) {
-    var form = document.getElementById('secret_form');
-
-    if (!form) {
-      return;
-    }
-
-    var filesEl = document.getElementById('files');
-    var addFileEl = document.getElementById('add_file');
-    var fileRefsEl = document.getElementById('id_file_refs');
-    var expiresEl = document.getElementById('id_expires');
-    var addFileInputs = [];
-
-    if (addFileEl) {
-      addFileEl.addEventListener('click', function() {
-        var input = document.createElement('input');
-        input.type = 'file';
-
-        addFileInputs.push(input);
-
-        filesEl.appendChild(input);
-      });
-    }
-
-    form.addEventListener('submit', function(event) {
-      if (addFileInputs.length) {
-        var files = [];
-
-        addFileInputs.forEach(function(el) {
-          if (el.files.length) {
-            for (var i = 0; i < el.files.length; i++) {
-              files.push(el.files.item(i));
-            }
-          }
-        });
-      }
-
-      if (files.length) {
-        event.preventDefault();
-
-        var expiresIn = parseInt(expiresEl.value);
-
-        files.forEach(function(file) {
-          root.uploadFile(file, expiresIn).then(function(res) {
-            console.log('Result:', res);
-          }).catch(function(err) {
-            console.log('Error:', err);
-          })
-        });
-
-        return false;
-      }
-    });
-  })(this);
-</script>
 {% endblock %}
