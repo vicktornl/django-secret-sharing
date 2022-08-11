@@ -22,7 +22,7 @@ test_requires = [
 
 setup(
     name="django-secret-sharing",
-    version="0.3.1",
+    version="0.4.0",
     description="",
     author="R. Moorman <rob@vicktor.nl>",
     install_requires=install_requires,
