@@ -73,6 +73,11 @@ Override the default templates with your own
       <a href="{% url 'django_secret_sharing:generate-password' %}">Generate password</a>
   </form>
 {% endif %}
+
+{% block scripts %}
+{% include "django_secret_sharing/file_transfer_simple.html" %}
+{% include "django_secret_sharing/file_transfer_scripts.html" %}
+{% endblock %}
 ```
 
 **django_secret_sharing/retrieve.html**
