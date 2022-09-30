@@ -49,16 +49,6 @@ def test_encrypt_and_decrypt(value):
     assert decrypted == value
 
 
-def test_encrypt_and_decrypt_short_value():
-    text = "Hellö, : World!"
-    key, iv = get_key_iv_pair()
-
-    encrypted, text_length = encrypt_value(text, key, iv)
-    decrypted = decrypt_value(encrypted, text_length, key, iv)
-
-    assert decrypted[:text_length] == text
-
-
 @pytest.mark.django_db
 def test_create_secret():
     raw_value = "My secret value"
