@@ -1,9 +1,9 @@
 from setuptools import find_packages, setup
 
 install_requires = [
-    "django>=2.2.8",
+    "cryptography>=38",
+    "django>=3",
     "djangorestframework>=3",
-    "pycrypto>=2",
 ]
 
 aws_requires = [
@@ -22,7 +22,7 @@ test_requires = [
 
 setup(
     name="django-secret-sharing",
-    version="0.4.0",
+    version="0.5.0",
     description="",
     author="R. Moorman <rob@vicktor.nl>",
     install_requires=install_requires,
@@ -41,5 +41,6 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
 )

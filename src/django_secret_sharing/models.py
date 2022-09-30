@@ -83,7 +83,7 @@ class AbstractFile(ExpiryModel, MutationDateModel):
     )
     ref = models.TextField(unique=True)
 
-    objects = SecretManager()
+    objects = FileManager()
 
     class Meta:
         abstract = True
