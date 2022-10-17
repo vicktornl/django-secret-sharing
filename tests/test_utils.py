@@ -1,21 +1,52 @@
+import os
 from datetime import timedelta
 
 import pytest
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 
 from django_secret_sharing.utils import (
-    URL_PART_ENCODING,
+    ENCODING,
+    IV_LENGTH,
+    KEY_LENGTH,
     create_secret,
     decrypt_value,
     encrypt_value,
     get_date_by_expires_value,
+    get_key_iv_pair,
     get_secret_by_url_part,
 )
 
 ONE_HOUR = 60 * 60
 ONE_DAY = 60 * 60 * 24
 ONE_WEEK = 60 * 60 * 24 * 7
+
+
+def test_key_iv_pair():
+    key, iv = get_key_iv_pair()
+
+    assert len(key) == KEY_LENGTH
+    assert key.__class__ == bytes
+
+    assert len(iv) == IV_LENGTH
+    assert iv.__class__ == bytes
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "Hellö, : World!",
+        "This is a longer value than the first one.",
+        "1",
+        ":!.@#$%^&*()",
+    ],
+)
+def test_encrypt_and_decrypt(value):
+    key, iv = get_key_iv_pair()
+
+    encrypted, value_length = encrypt_value(value, key, iv)
+    decrypted = decrypt_value(encrypted, value_length, key, iv)
+
+    assert decrypted == value
 
 
 @pytest.mark.django_db
@@ -35,17 +66,6 @@ def test_get_secret():
     assert not secret.erased
     assert secret.value != value
     assert value == raw_value
-
-
-def test_encrypt_and_decrypt():
-    text = "Hellö, World!"
-    key = get_random_string(32)
-    iv = get_random_string(16)
-
-    encrypted = encrypt_value(text, key=key, iv=iv)
-    decrypted = decrypt_value(encrypted, key=key, iv=iv)
-
-    assert decrypted == text.encode(URL_PART_ENCODING)
 
 
 def test_get_date_by_expires_value():
