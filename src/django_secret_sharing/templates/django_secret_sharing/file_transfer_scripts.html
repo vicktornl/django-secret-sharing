@@ -33,7 +33,8 @@
 
                     fetch(data.url, {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        credentials: 'include'
                     }).then(function(res) {
                         if (res && res.ok) {
                             if (root.handleSecretFileUploaded) {
