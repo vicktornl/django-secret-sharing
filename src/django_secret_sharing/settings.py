@@ -1,5 +1,3 @@
-from email.policy import default
-
 from django.conf import settings
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as _
@@ -23,3 +21,8 @@ BACKEND = get_setting(
 )
 AWS_BUCKET = get_setting("AWS_BUCKET", default="")
 AWS_REGION = get_setting("AWS_REGION", default=None)
+AWS_ENDPOINT_URL = get_setting("AWS_ENDPOINT_URL", default=None)
+AWS_USE_SSL = get_setting("USE_SSL", default=None)
+AWS_VERIFY = get_setting("VERIFY", default=None)
+AWS_ACCESS_KEY_ID = get_setting("AWS_ACCESS_KEY_ID", default=None)
+AWS_SECRET_ACCESS_KEY = get_setting("AWS_SECRET_ACCESS_KEY", default=None)

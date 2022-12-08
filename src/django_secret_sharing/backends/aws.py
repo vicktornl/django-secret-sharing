@@ -5,10 +5,10 @@ import boto3
 from botocore.exceptions import ClientError
 from django.utils import timezone
 
+from django_secret_sharing import settings
 from django_secret_sharing.backends.base import BaseBackend
 from django_secret_sharing.exceptions import BackendError
 from django_secret_sharing.models import File
-from django_secret_sharing.settings import AWS_BUCKET, AWS_REGION
 
 
 class AWSBackend(BaseBackend):
@@ -18,10 +18,18 @@ class AWSBackend(BaseBackend):
         self.bucket = self.get_bucket()
 
     def get_client(self):
-        return boto3.client("s3")
+        client_options = dict(
+            endpoint_url=settings.AWS_ENDPOINT_URL,
+            region_name=settings.AWS_REGION,
+            use_ssl=settings.AWS_USE_SSL,
+            verify=settings.AWS_VERIFY,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+        return boto3.client("s3", **client_options)
 
     def get_bucket(self):
-        return AWS_BUCKET
+        return settings.AWS_BUCKET
 
     def validate_file_refs(self, file_refs: List[str]) -> bool:
         for file_ref in file_refs:
@@ -43,7 +51,7 @@ class AWSBackend(BaseBackend):
     def delete_file(self, ref: str) -> bool:
         try:
             self.client.delete_object(
-                Bucket=AWS_BUCKET,
+                Bucket=settings.AWS_BUCKET,
                 Key=ref,
             )
         except ClientError:
@@ -61,7 +69,7 @@ class AWSBackend(BaseBackend):
                 deleted_file_refs.append(file.ref)
 
         res = self.client.list_objects(
-            Bucket=AWS_BUCKET,
+            Bucket=settings.AWS_BUCKET,
             MaxKeys=1000,
         )
 
