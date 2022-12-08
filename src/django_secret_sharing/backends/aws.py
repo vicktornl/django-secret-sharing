@@ -2,6 +2,7 @@ from datetime import timedelta
 from typing import List, Tuple
 
 import boto3
+from botocore.client import Config
 from botocore.exceptions import ClientError
 from django.utils import timezone
 
@@ -26,6 +27,10 @@ class AWSBackend(BaseBackend):
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
+        if settings.AWS_SIGNATURE_VERSION:
+            client_options["config"] = Config(
+                signature_version=settings.AWS_SIGNATURE_VERSION
+            )
         return boto3.client("s3", **client_options)
 
     def get_bucket(self):
