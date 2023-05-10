@@ -69,7 +69,6 @@ def test_get_secret():
 
 
 def test_get_date_by_expires_value():
-
     one_hour = get_date_by_expires_value(expires_value=ONE_HOUR)
     one_day = get_date_by_expires_value(expires_value=ONE_DAY)
     seven_days = get_date_by_expires_value(expires_value=ONE_WEEK)
