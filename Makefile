@@ -13,7 +13,7 @@ install:
 	pip install -e .[test]
 
 test:
-	py.test
+	pytest
 
 wheel:
 	pip install wheel

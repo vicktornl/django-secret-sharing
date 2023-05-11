@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "cryptography>=38",
-    "django>=3",
+    "django>=3.2",
     "djangorestframework>=3",
 ]
 
@@ -37,10 +37,9 @@ setup(
         "Framework :: Django",
         "Operating System :: Unix",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
 )

@@ -17,8 +17,8 @@ A secure sharing app for Django.
 
 ## Requirements
 
-- Python 3
-- Django >= 2
+- Python >=3.7
+- Django >= 3.2
 
 ## Installation
 
