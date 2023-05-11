@@ -162,3 +162,12 @@ def test_expires_value_not_in_choices(client):
 
     assert res.context_data["form"]._errors["expires"]
     assert Secret.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_invalid_hash_returns_404(client):
+    res = client.get(
+        reverse("django_secret_sharing:retrieve", kwargs={"url_part": "12345"})
+    )
+
+    assert res.status_code == 404

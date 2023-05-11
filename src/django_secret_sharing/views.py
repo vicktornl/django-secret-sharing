@@ -46,7 +46,7 @@ class RetreiveSecretView(generic.TemplateView):
 
         try:
             secret, value = get_secret_by_url_part(url_part)
-        except SecretNotFound:
+        except (SecretNotFound, ValueError):
             raise Http404()
 
         context = super().get_context_data(**kwargs)
