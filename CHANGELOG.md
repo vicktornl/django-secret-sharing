@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.0] - 2022-12-08
+
+- Fix: allow s3 client overrides via settings (e.g. for testing locally with s3)
+
 ## [0.6.0] - 2022-12-06
 
 - Added: `delete_stale_files` management command to delete stale files
