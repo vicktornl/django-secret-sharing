@@ -17,7 +17,7 @@ A secure sharing app for Django.
 
 ## Requirements
 
-- Python >=3.7
+- Python >=3.8
 - Django >= 3.2
 
 ## Installation
@@ -136,7 +136,7 @@ window.handleSecretFileUploaded = (fileRef, file) => {
 
 ## Commands
 
-### delete_expired_files
+### delete_stale_files
 
 Deletes expired and unfinished files. It's recommended to run this command at least once a day in order to minimize storage limitations (or increase costs optimizations).
 
