@@ -45,9 +45,9 @@ class RetreiveSecretView(generic.TemplateView):
         url_part = kwargs["url_part"]
 
         try:
-            secret, value = get_secret_by_url_part(url_part)
-        except (SecretNotFound, ValueError):
-            raise Http404()
+            secret, _ = get_secret_by_url_part(url_part)
+        except (SecretNotFound, ValueError) as e:
+            raise Http404() from e
 
         context = super().get_context_data(**kwargs)
         context["secret"] = secret
@@ -64,8 +64,8 @@ class ViewSecretView(generic.TemplateView):
 
         try:
             secret, value = get_secret_by_url_part(url_part)
-        except SecretNotFound:
-            raise Http404()
+        except SecretNotFound as e:
+            raise Http404() from e
 
         if secret.view_once:
             secret.erase()

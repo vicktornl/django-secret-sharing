@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("django_secret_sharing", "0001_add_secret_model"),
     ]

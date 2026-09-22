@@ -10,7 +10,6 @@ from rest_framework.views import APIView
 
 from django_secret_sharing import serializers
 from django_secret_sharing.exceptions import SecretNotFound
-from django_secret_sharing.models import Secret
 from django_secret_sharing.utils import (
     create_secret,
     get_backend,
@@ -50,7 +49,7 @@ class SecretRetrieveView(APIView):
         try:
             secret, value = get_secret_by_url_part(url_part)
         except SecretNotFound:
-            raise Http404()
+            raise Http404() from None
 
         if secret.view_once:
             secret.erase()

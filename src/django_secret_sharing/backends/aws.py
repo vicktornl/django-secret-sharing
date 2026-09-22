@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import List, Tuple
 
 import boto3
 from botocore.client import Config
@@ -19,14 +18,14 @@ class AWSBackend(BaseBackend):
         self.bucket = self.get_bucket()
 
     def get_client(self):
-        client_options = dict(
-            endpoint_url=settings.AWS_ENDPOINT_URL,
-            region_name=settings.AWS_REGION,
-            use_ssl=settings.AWS_USE_SSL,
-            verify=settings.AWS_VERIFY,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
+        client_options = {
+            "endpoint_url": settings.AWS_ENDPOINT_URL,
+            "region_name": settings.AWS_REGION,
+            "use_ssl": settings.AWS_USE_SSL,
+            "verify": settings.AWS_VERIFY,
+            "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
+            "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
+        }
         if settings.AWS_SIGNATURE_VERSION:
             client_options["config"] = Config(
                 signature_version=settings.AWS_SIGNATURE_VERSION
@@ -36,7 +35,7 @@ class AWSBackend(BaseBackend):
     def get_bucket(self):
         return settings.AWS_BUCKET
 
-    def validate_file_refs(self, file_refs: List[str]) -> bool:
+    def validate_file_refs(self, file_refs: list[str]) -> bool:
         for file_ref in file_refs:
             # Prevent empty list items (often caused by bad javascript
             # implementations) causing to fail, skip them instead
@@ -49,7 +48,7 @@ class AWSBackend(BaseBackend):
                 )
                 if not res.get("ResponseMetadata", None):
                     return False
-            except ClientError as err:
+            except ClientError:
                 return False
         return True
 
@@ -64,8 +63,8 @@ class AWSBackend(BaseBackend):
         return True
 
     def delete_stale_files(
-        self, expired_files: List[File], existing_file_refs: List[str]
-    ) -> List[str]:
+        self, expired_files: list[File], existing_file_refs: list[str]
+    ) -> list[str]:
         deleted_file_refs = []
 
         for file in expired_files:
@@ -99,7 +98,7 @@ class AWSBackend(BaseBackend):
 
     def get_upload_url(
         self, id: str, filename: str, expires_in: int = 3600
-    ) -> Tuple[str, dict]:
+    ) -> tuple[str, dict]:
         upload_path = self.get_upload_path(id, filename)
         try:
             res = self.client.generate_presigned_post(
@@ -110,7 +109,7 @@ class AWSBackend(BaseBackend):
                 ExpiresIn=expires_in,
             )
         except ClientError as err:
-            raise BackendError(str(err))
+            raise BackendError(str(err)) from err
         url = res["url"]
         fields = res["fields"]
         return (url, fields)
@@ -126,5 +125,5 @@ class AWSBackend(BaseBackend):
                 ExpiresIn=file.expires_in,
             )
         except ClientError as err:
-            raise BackendError(str(err))
+            raise BackendError(str(err)) from err
         return res
