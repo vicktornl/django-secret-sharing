@@ -23,5 +23,6 @@ test:
 	pytest --reuse-db
 
 dist:
-	pip install --upgrade build
+	pip install --upgrade build twine
 	python -m build
+	twine check dist/*

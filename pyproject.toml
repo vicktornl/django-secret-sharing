@@ -9,6 +9,7 @@ readme = "README.md"
 license = "MIT"
 authors = [ { name = "R. Moorman", email = "rob@vicktor.nl" } ]
 requires-python = ">=3.11"
+dynamic = [ "version" ]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Web Environment",
@@ -38,6 +39,9 @@ optional-dependencies.tests = [ "coverage", "pytest", "pytest-cov", "pytest-djan
 urls.Changelog = "https://github.com/vicktornl/django-secret-sharing/blob/main/CHANGELOG.md"
 urls.Issues = "https://github.com/vicktornl/django-secret-sharing/issues"
 urls.Source = "https://github.com/vicktornl/django-secret-sharing"
+
+[tool.setuptools_scm]
+version_file = "src/django_secret_sharing/_version.py"
 
 [tool.ruff]
 target-version = "py311"  # minimum target version

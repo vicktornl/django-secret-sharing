@@ -1,10 +1,16 @@
 exclude *
 recursive-exclude * *
 
+include CHANGELOG.md
+include LICENSE
 include MANIFEST.in
-include setup.py
+include README.md
+include pyproject.toml
 
 graft src/django_secret_sharing
+recursive-include src/django_secret_sharing *.mo
+
+recursive-include tests *
 
 global-exclude .DS_Store
 global-exclude *.pyc

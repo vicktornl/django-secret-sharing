@@ -12,3 +12,5 @@ __pycache__/
 
 # IDE
 .vscode/
+
+src/django_secret_sharing/_version.py
