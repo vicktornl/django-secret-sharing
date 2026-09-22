@@ -10,7 +10,7 @@ format:
 	isort .
 
 install:
-	pip install -e .[test]
+	pip install -e .[test,aws]
 
 test:
 	pytest
