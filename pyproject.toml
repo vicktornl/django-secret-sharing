@@ -19,7 +19,6 @@ classifiers = [
   "Framework :: Django :: 6.1",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
-  "Operating System :: Unix",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
