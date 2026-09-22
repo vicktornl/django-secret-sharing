@@ -43,7 +43,7 @@ jobs:
   publish:
     name: Publish to PyPI
     needs: build_and_publish
-    runs-on: ubuntu-26.04-arm
+    runs-on: ubuntu-latest
     environment:
       name: publish
       url: https://pypi.org/project/django-secret-sharing/
