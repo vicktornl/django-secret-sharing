@@ -30,7 +30,7 @@ def pytest_configure():
             "django.middleware.clickjacking.XFrameOptionsMiddleware",
         ],
         ROOT_URLCONF="tests.urls",
-        SECRET_KEY="tests",
+        SECRET_KEY="tests",  # noqa: S106 - hardcoded secret key for tests
         TEMPLATES=[
             {
                 "BACKEND": "django.template.backends.django.DjangoTemplates",

@@ -1,6 +1,4 @@
-import os
 from datetime import datetime, timedelta
-from typing import List, Optional, Tuple, Union
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from django.core import signing
@@ -10,7 +8,6 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.module_loading import import_string
 
-from django_secret_sharing import settings
 from django_secret_sharing.exceptions import SecretNotFound
 from django_secret_sharing.models import File, Secret
 from django_secret_sharing.settings import BACKEND
@@ -33,7 +30,7 @@ def get_cipher(key: bytes, iv: bytes):
     return cipher
 
 
-def get_key_iv_pair() -> Tuple[bytes, bytes]:
+def get_key_iv_pair() -> tuple[bytes, bytes]:
     key = get_random_string(KEY_LENGTH).encode(ENCODING)
     iv = get_random_string(IV_LENGTH).encode(ENCODING)
     return key, iv
@@ -41,13 +38,13 @@ def get_key_iv_pair() -> Tuple[bytes, bytes]:
 
 def transform_value_to_valid_block_length(
     value: bytes, block_length=16
-) -> Tuple[bytes, int]:
+) -> tuple[bytes, int]:
     value_length = len(value)
     length_with_padding = value_length + (block_length - value_length) % block_length
     return value.ljust(length_with_padding, b"\0"), value_length
 
 
-def encrypt_value(value: str, key: bytes, iv: bytes) -> Tuple[bytes, int]:
+def encrypt_value(value: str, key: bytes, iv: bytes) -> tuple[bytes, int]:
     bytes_value, bytes_value_length = transform_value_to_valid_block_length(
         value.encode(ENCODING)
     )
@@ -70,17 +67,17 @@ def build_url_part(signed_id: str, value_length: int, key: str, iv: str) -> byte
     )
 
 
-def create_files(file_refs: List[str]) -> List[File]:
+def create_files(file_refs: list[str]) -> list[File]:
     files = []
     return files
 
 
 def create_secret(
     value: str,
-    expires_in: Optional[int] = None,
-    view_once: Optional[bool] = True,
-    file_refs: List[str] = [],
-) -> Tuple[Secret, str]:
+    expires_in: int | None = None,
+    view_once: bool | None = True,
+    file_refs: list[str] = [],  # noqa: B006, mutable default argument
+) -> tuple[Secret, str]:
     key, iv = get_key_iv_pair()
     salt = key.decode(ENCODING)
     expiry_date = get_date_by_expires_value(expires_in)
@@ -99,14 +96,14 @@ def create_secret(
     return secret, url_part
 
 
-def get_secret_by_url_part(url_part: str) -> Tuple[Secret, str]:
+def get_secret_by_url_part(url_part: str) -> tuple[Secret, str]:
     try:
         decoded_url_part = urlsafe_base64_decode(url_part).decode(ENCODING)
-    except UnicodeDecodeError:
-        raise SecretNotFound()
+    except UnicodeDecodeError as e:
+        raise SecretNotFound() from e
 
     value_length = decoded_url_part.rsplit(":", 1)[1]
-    decoded_url_part = decoded_url_part[: -len(":%s" % value_length)]
+    decoded_url_part = decoded_url_part[: -len(f":{value_length}")]
     signed_id_length = len(decoded_url_part) - (KEY_LENGTH + IV_LENGTH)
     signed_id = decoded_url_part[:signed_id_length]
     key = decoded_url_part[signed_id_length:-IV_LENGTH].encode(ENCODING)
@@ -120,7 +117,7 @@ def get_secret_by_url_part(url_part: str) -> Tuple[Secret, str]:
             secret.erase()
             raise Secret.DoesNotExist()
     except Secret.DoesNotExist:
-        raise SecretNotFound()
+        raise SecretNotFound() from None
 
     decrypted_value = decrypt_value(
         force_bytes(secret.value), int(value_length), key, iv
@@ -135,8 +132,8 @@ def validate_signed_id(signed_id, salt):
         return None
 
 
-def get_date_by_expires_value(expires_value: int) -> Union[datetime, None]:
+def get_date_by_expires_value(expires_value: int) -> datetime | None:
     try:
         return timezone.now() + timedelta(seconds=expires_value)
-    except:
+    except:  # noqa: E722, catch all exceptions for invalid expires_value
         return None

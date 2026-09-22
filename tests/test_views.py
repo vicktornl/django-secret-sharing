@@ -126,9 +126,7 @@ def test_generate_password_view(client):
 
 @pytest.mark.django_db
 def test_view_secret_more_then_once(client):
-    secret, url_part = create_secret(
-        "My secret value", expires_in=ONE_HOUR, view_once=False
-    )
+    _, url_part = create_secret("My secret value", expires_in=ONE_HOUR, view_once=False)
 
     res = client.get(
         reverse("django_secret_sharing:retrieve", kwargs={"url_part": url_part})

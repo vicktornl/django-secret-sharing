@@ -1,0 +1,115 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [ "setuptools>=80", "setuptools-scm>=8" ]
+
+[project]
+name = "django-secret-sharing"
+description = "App for sharing files and secret messages securely"
+readme = "README.md"
+license = "MIT"
+authors = [ { name = "R. Moorman", email = "rob@vicktor.nl" } ]
+requires-python = ">=3.11"
+dynamic = [ "version" ]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0",
+  "Framework :: Django :: 6.1",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Operating System :: Unix",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+]
+dependencies = [
+  "cryptography>=50",
+  "django>=5.2",
+  "djangorestframework>=3",
+]
+optional-dependencies.aws = [
+  "boto3>=1.16",
+]
+optional-dependencies.tests = [ "coverage", "pytest", "pytest-cov", "pytest-django", "ruff~=0.16.0" ]
+urls.Changelog = "https://github.com/vicktornl/django-secret-sharing/blob/main/CHANGELOG.md"
+urls.Issues = "https://github.com/vicktornl/django-secret-sharing/issues"
+urls.Source = "https://github.com/vicktornl/django-secret-sharing"
+
+[tool.setuptools_scm]
+version_file = "src/django_secret_sharing/_version.py"
+
+[tool.ruff]
+target-version = "py311"  # minimum target version
+lint.select = [
+  "B",      # flake8-bugbear
+  "BLE",    # flake8-blind-except
+  "C4",     # flake8-comprehensions
+  "DJ",     # flake8-django
+  "E",      # pycodestyle errors
+  "F",      # pyflakes
+  "G",      # flake8-logging-format
+  "I",      # isort
+  "INT",    # flake8-gettext
+  "PGH",    # pygrep-hooks
+  "PIE",    # flake8-pie
+  "PT",     # flake8-pytest-style
+  "RUF100", # unused noqa
+  "S",      # flake8-bandit
+  "SIM",    # flake8-simplify
+  "T20",    # flake8-print
+  "UP",     # pyupgrade
+  "W",      # pycodestyle warnings
+  "YTT",    # flake8-2020
+]
+lint.extend-ignore = [
+  "E501",   # no line length errors
+  "G002",   # https://docs.astral.sh/ruff/rules/logging-percent-format/
+  "SIM105", # https://docs.astral.sh/ruff/rules/suppressible-exception/
+  "UP031",  # https://docs.astral.sh/ruff/rules/printf-string-formatting/
+]
+lint.per-file-ignores."*/migrations/*" = [
+  "RUF012", # https://docs.astral.sh/ruff/rules/mutable-class-default/
+]
+lint.per-file-ignores."tests/*" = [
+  "S101",   # Bandit: Use of `assert` okay in tests
+  "SIM117", # flake8-simply: Using multiple nested `with` statements is often clearer in the context of tests
+]
+lint.fixable = [ "C4", "E", "F", "I", "UP" ]
+lint.isort.known-first-party = [ "django_secret_sharing", "sandbox", "tests" ]
+
+[tool.pytest]
+ini_options.testpaths = "tests/"
+ini_options.pythonpath = "sandbox"
+ini_options.norecursedirs = [ "tests/contrib", "tests/e2e" ]
+ini_options.addopts = "--reuse-db"
+ini_options.DJANGO_SETTINGS_MODULE = "settings"
+
+[tool.coverage]
+run.source_pkgs = [ "django_secret_sharing" ]
+run.omit = [ "*/migrations/*", "*/tests/*" ]
+run.branch = true
+report.exclude_lines = [
+  # Don't complain about abstract methods, they aren't run:
+  "@(abc.)?abstractmethod",
+
+  # Don't complain about missing debug-only code:
+  "def __repr__",
+  "if __name__ == .__main__.:",
+
+  # Don't complain if non-runnable code isn't run:
+  "if 0:",
+  "if self.debug",
+  # Nor complain about type checking
+  "if TYPE_CHECKING *",
+  # Have to re-enable the standard pragma
+  "pragma: no cover",
+
+  # Don't complain if tests don't hit defensive assertion code:
+  "raise AssertionError",
+  "raise NotImplementedError",
+]

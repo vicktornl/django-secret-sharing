@@ -1,11 +1,9 @@
-import os
 from datetime import timedelta
 
 import pytest
 from django.utils import timezone
 
 from django_secret_sharing.utils import (
-    ENCODING,
     IV_LENGTH,
     KEY_LENGTH,
     create_secret,
@@ -25,10 +23,10 @@ def test_key_iv_pair():
     key, iv = get_key_iv_pair()
 
     assert len(key) == KEY_LENGTH
-    assert key.__class__ == bytes
+    assert isinstance(key, bytes)
 
     assert len(iv) == IV_LENGTH
-    assert iv.__class__ == bytes
+    assert isinstance(iv, bytes)
 
 
 @pytest.mark.parametrize(

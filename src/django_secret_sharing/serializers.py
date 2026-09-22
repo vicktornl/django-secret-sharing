@@ -1,8 +1,6 @@
-from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from django_secret_sharing import settings
-from django_secret_sharing.forms import CreateSecretForm
 
 
 class SecretCreateSerializer(serializers.Serializer):

@@ -1,11 +1,7 @@
 import os
 import uuid
 
-from django.conf import settings
 from django.db import models
-from django.http import Http404
-from django.shortcuts import get_object_or_404
-from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -44,6 +40,11 @@ class AbstractSecret(ExpiryModel, MutationDateModel):
 
     objects = SecretManager()
 
+    class Meta:
+        abstract = True
+        verbose_name = _("Secret")
+        verbose_name_plural = _("Secrets")
+
     def erase(self, *args, **kwargs):
         self.value = None
         self.erased = True
@@ -58,14 +59,10 @@ class AbstractSecret(ExpiryModel, MutationDateModel):
             return timezone.now() > self.expires_at
         return False
 
-    class Meta:
-        abstract = True
-        verbose_name = _("Secret")
-        verbose_name_plural = _("Secrets")
-
 
 class Secret(AbstractSecret):
-    pass
+    def __str__(self):
+        return str(self.id)
 
 
 class FileManager(models.Manager):
@@ -92,9 +89,12 @@ class AbstractFile(ExpiryModel, MutationDateModel):
 
 
 class File(AbstractFile):
+    def __str__(self):
+        return self.ref
+
     @cached_property
     def filename(self):
-        head, tail = os.path.split(self.ref)
+        _, tail = os.path.split(self.ref)
         return tail
 
     @cached_property

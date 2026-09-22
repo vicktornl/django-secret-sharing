@@ -1,4 +1,6 @@
-default: clean format install
+.PHONY: default clean format install coverage test dist
+
+default: clean format install dist
 
 clean:
 	find . -name '*.pyc' -exec rm -rf {} +
@@ -6,15 +8,21 @@ clean:
 	find . -name '*.egg-info' -exec rm -rf {} +
 
 format:
-	black .
-	isort .
+	ruff check . --fix
+	ruff format
 
 install:
-	pip install -e .[test]
+	pip install -e .[test,aws]
+
+coverage:
+	coverage run -m pytest
+	coverage html
+	coverage report -m
 
 test:
-	pytest
+	pytest --reuse-db
 
-wheel:
-	pip install wheel
-	python setup.py sdist bdist_wheel
+dist:
+	pip install --upgrade build twine
+	python -m build
+	twine check dist/*

@@ -1,10 +1,9 @@
 from django.conf import settings
-from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as _
 
 
 def get_setting(name: str, default=None):
-    return getattr(settings, "DJANGO_SECRET_SHARING_%s" % name, default)
+    return getattr(settings, f"DJANGO_SECRET_SHARING_{name}", default)
 
 
 EXPIRY_TIME_CHOICES = [

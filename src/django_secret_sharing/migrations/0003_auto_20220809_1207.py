@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("django_secret_sharing", "0002_auto_20220525_1008"),
     ]

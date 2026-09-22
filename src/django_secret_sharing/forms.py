@@ -30,9 +30,7 @@ class CreateSecretForm(forms.Form):
 
     def clean_file_refs(self):
         file_refs = self.cleaned_data["file_refs"]
-        file_refs = (
-            self.cleaned_data["file_refs"].split(",") if file_refs is not "" else []
-        )
+        file_refs = self.cleaned_data["file_refs"].split(",") if file_refs != "" else []
 
         if File.objects.filter(ref__in=file_refs).exists():
             raise ValidationError(_("File(s) already exists"))
