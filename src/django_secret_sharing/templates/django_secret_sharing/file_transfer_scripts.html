@@ -6,6 +6,7 @@
             return new Promise(function(resolve, reject) {
                 fetch(uploadFileUrl, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -34,7 +35,7 @@
                     fetch(data.url, {
                         method: 'POST',
                         body: formData,
-                        credentials: 'include'
+                        credentials: 'same-origin'
                     }).then(function(res) {
                         if (res && res.ok) {
                             if (root.handleSecretFileUploaded) {
