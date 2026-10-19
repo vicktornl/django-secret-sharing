@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.1] - 2026-10-19
+
+- Fix CORS upload issue
+
 ## [0.8.0] - 2026-09-22
 
 ### Changed
